@@ -1,0 +1,5 @@
+<p>
+  <%= label_tag('settings[issue_key_sharing]', l(:label_issue_key_sharing)) %>
+  <%= check_box_tag('settings[issue_key_sharing]', 1, @settings.is_a?(Hash) && @settings[:issue_key_sharing]) %>
+  <%= l(:text_issue_key_sharing) %>
+</p>

@@ -1,0 +1,19 @@
+<p>
+  <%= form.text_field(:issue_key, :size => 10, :disabled => @project.issue_key.present? && !@project.issue_key_changed?) %>
+  <% if @project.issue_key.blank? || @project.issue_key_changed? %>
+    <em class="info">
+      <%= l(:text_length_between, :min => 1, :max => Project::ISSUE_KEY_MAX_LENGTH) %>
+      <%= l(:text_issue_key_info) %>
+    </em>
+    <!-- TODO: Set this key for all available subprojects -->
+  <% end %>
+</p>
+<script type="text/javascript">
+  //<![CDATA[
+  <% if defined? observe_field %>
+    $('project_identifier').up('p').insert({ after: $('project_issue_key').up('p').remove() });
+  <% else %>
+    // TODO
+  <% end %>
+  //]]>
+</script>
