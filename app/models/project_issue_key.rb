@@ -13,7 +13,7 @@ class ProjectIssueKey < ActiveRecord::Base
     def reserve_issue_number!
         issue_number = 0
         self.class.transaction do
-            reload
+            reload(:lock => true)
             if increment!(:last_issue_number)
                 issue_number = last_issue_number
             else
@@ -26,7 +26,7 @@ class ProjectIssueKey < ActiveRecord::Base
     def self.reserve_issue_number!(key)
         issue_number = 0
         transaction do
-            project_issue_key = find_by_project_key(key)
+            project_issue_key = find_by_project_key(key, :lock => true)
             unless project_issue_key
                 project_issue_key = new(:project_key => key)
                 project_issue_key.save!
