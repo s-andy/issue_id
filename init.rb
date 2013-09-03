@@ -4,9 +4,16 @@ require_dependency 'issue_id_hook'
 
 Rails.logger.info 'Starting ISSUE-id Plugin for Redmine'
 
-# FIXME: Attempted to update a stale object (when updating project key, looks to be a problem in update_attributes)
-
 Rails.configuration.to_prepare do
+    unless ApplicationHelper.included_modules.include?(IssueApplicationHelperPatch)
+        ApplicationHelper.send(:include, IssueApplicationHelperPatch)
+    end
+    unless IssuesController.included_modules.include?(IssueIdsControllerPatch)
+        IssuesController.send(:include, IssueIdsControllerPatch)
+    end
+    unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
+        IssuesHelper.send(:include, IssueIdsHelperPatch)
+    end
     unless Project.included_modules.include?(IssueProjectPatch)
         Project.send(:include, IssueProjectPatch)
     end

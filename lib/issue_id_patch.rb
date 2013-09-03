@@ -12,7 +12,7 @@ module IssueIdPatch
             validates_length_of :project_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH, :allow_blank => true
             validates_format_of :project_key, :with => %r{^[A-Z][A-Z0-9]*$}, :allow_blank => true
 
-            alias_method :id, :issue_id # FIXME: Until all issues resolved this cannot be uncommented
+            alias_method_chain :to_s, :issue_id
         end
     end
 
@@ -33,9 +33,12 @@ module IssueIdPatch
 
     module InstanceMethods
 
+        def support_issue_id?
+            project_key.present? && issue_number.present?
+        end
+
         def issue_id
-            id = read_attribute(:id)
-            if project_key.present? && issue_number.present?
+            if support_issue_id?
                 @issue_id ||= IssueID.new(id, project_key, issue_number)
             else
                 id
@@ -43,11 +46,19 @@ module IssueIdPatch
         end
 
         def to_param
-            issue_id.to_s
+            issue_id.to_param
         end
 
         def quoted_id
             issue_id.to_i.to_s
+        end
+
+        def to_s_with_issue_id
+            if support_issue_id?
+                "#{tracker} ##{to_param}: #{subject}"
+            else
+                to_s_without_issue_id
+            end
         end
 
     end

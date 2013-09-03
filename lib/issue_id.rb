@@ -23,12 +23,12 @@ class IssueID < BasicObject
         if project_key.present? && issue_number.present?
             to_key_number(project_key, issue_number)
         else
-            id.to_param rescue id
+            id.respond_to?(:to_param) ? id.to_param : id
         end
     end
 
     def quoted_id
-        id.to_s
+        id.to_i.to_s
     end
 
     def is_a?(klass)
@@ -39,22 +39,12 @@ class IssueID < BasicObject
         klass == ::IssueID || id.kind_of?(klass)
     end
 
-    def ==(other)
-        id == other
-    end
-
-    def <=>(other)
-        id <=> other
+    def respond_to?(name)
+        super || id.respond_to?(name)
     end
 
     def method_missing(name, *args, &block)
-        value = id.send(name, *args, &block)
-        if name == :respond_to? # FIXME
-            ::Rails.logger.info " ========> respond_to?(#{args[0]})!"
-        else
-            ::Rails.logger.info " ========> You may need to define #{name}!"
-        end
-        value.is_a?(::Integer) ? ::IssueID.new(value, project_key, issue_number) : value
+        id.send(name, *args, &block)
     end
 
 protected
