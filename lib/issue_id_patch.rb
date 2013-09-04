@@ -12,6 +12,8 @@ module IssueIdPatch
             validates_length_of :project_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH, :allow_blank => true
             validates_format_of :project_key, :with => %r{^[A-Z][A-Z0-9]*$}, :allow_blank => true
 
+            after_save :generate_issue_id
+
             alias_method_chain :to_s, :issue_id
         end
     end
@@ -58,6 +60,19 @@ module IssueIdPatch
                 "#{tracker} ##{to_param}: #{subject}"
             else
                 to_s_without_issue_id
+            end
+        end
+
+    private
+
+        def generate_issue_id
+            if project.issue_key.present?
+                reserved_number = ProjectIssueKey.reserve_issue_number!(project.issue_key)
+                if reserved_number
+                    Issue.update_all({ :project_key => project.issue_key,
+                                       :issue_number => reserved_number }, :id => id)
+                    reload
+                end
             end
         end
 

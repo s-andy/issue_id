@@ -7,11 +7,19 @@ module IssueIdsControllerPatch
         base.class_eval do
             unloadable
 
+            after_filter :fix_creation_notice, :only => :create
+
             alias_method_chain :retrieve_previous_and_next_issue_ids, :full_ids
         end
     end
 
     module InstanceMethods
+
+        def fix_creation_notice
+            if @issue.support_issue_id? && flash[:notice] && flash[:notice] =~ %r{#[0-9]+}
+                flash[:notice] = l(:notice_issue_successful_create, :id => "<a href=\"#{issue_path(@issue)}\">##{@issue.to_param}</a>")
+            end
+        end
 
         def retrieve_previous_and_next_issue_ids_with_full_ids
             retrieve_previous_and_next_issue_ids_without_full_ids

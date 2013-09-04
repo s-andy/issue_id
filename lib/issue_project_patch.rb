@@ -28,6 +28,21 @@ module IssueProjectPatch
 
     module InstanceMethods
 
+        def copy_issue_key_to_subprojects
+            if issue_key.present?
+                children.each do |subproject|
+                    if subproject.issue_key.blank?
+                        subproject.issue_key = issue_key
+                        if subproject.save
+                            subproject.copy_issue_key_to_subprojects
+                        end
+                    end
+                end
+            end
+        end
+
+    private
+
         def validate_issue_key_duplicates
             if issue_key.present?
                 project_key = ProjectIssueKey.find_by_project_key(issue_key)

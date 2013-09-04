@@ -8,6 +8,9 @@ Rails.configuration.to_prepare do
     unless ApplicationHelper.included_modules.include?(IssueApplicationHelperPatch)
         ApplicationHelper.send(:include, IssueApplicationHelperPatch)
     end
+    unless ProjectsController.included_modules.include?(IssueProjectsControllerPatch)
+        ProjectsController.send(:include, IssueProjectsControllerPatch)
+    end
     unless IssuesController.included_modules.include?(IssueIdsControllerPatch)
         IssuesController.send(:include, IssueIdsControllerPatch)
     end

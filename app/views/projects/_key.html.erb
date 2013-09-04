@@ -1,3 +1,4 @@
+<% settings = Setting.plugin_issue_id %>
 <p>
   <%= form.text_field(:issue_key, :size => 10, :disabled => @project.issue_key.present? && !@project.issue_key_changed?) %>
   <% if @project.issue_key.blank? || @project.issue_key_changed? %>
@@ -5,7 +6,10 @@
       <%= l(:text_length_between, :min => 1, :max => Project::ISSUE_KEY_MAX_LENGTH) %>
       <%= l(:text_issue_key_info) %>
     </em>
-    <!-- TODO: Set this key for all available subprojects -->
+    <% if @project.children.any? && settings.is_a?(Hash) && settings[:issue_key_sharing] %>
+      <%= check_box_tag('share_issue_key', 1, params[:share_issue_key]) %>
+      <%= l(:text_use_issue_key_for_subprojects) %>
+    <% end %>
   <% end %>
 </p>
 <script type="text/javascript">
