@@ -1,0 +1,26 @@
+<% if issue.support_issue_id? %>
+  <%= link_to("##{issue.id}", { :controller => 'issues', :action => 'show', :id => issue.id },
+                                :id => 'legacy_issue_id',
+                                :title => l(:text_legacy_issue_id),
+                                :style => 'display: none;') %>
+  <script type="text/javascript">
+    //<![CDATA[
+    <% if defined? observe_field %>
+      var legacy_issue_id = $('legacy_issue_id');
+      if (legacy_issue_id) {
+        var authors = $$('div.issue p.author');
+        if (authors.length > 0) {
+            authors.first().insert({ before: legacy_issue_id.remove() });
+            legacy_issue_id.show();
+        }
+      }
+    <% else %>
+      // TODO
+    <% end %>
+    //]]>
+  </script>
+<% end %>
+
+<% content_for(:header_tags) do %>
+  <%= stylesheet_link_tag('issue', :plugin => 'issue_id') %>
+<% end %>

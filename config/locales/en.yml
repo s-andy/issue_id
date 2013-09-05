@@ -4,3 +4,4 @@ en:
   text_issue_key_sharing: Allow projects to share the issue key with their subprojects
   text_issue_key_info: Only upper case letters (A-Z) and numbers are allowed.
   text_use_issue_key_for_subprojects: Use this issue key for all available subprojects
+  text_legacy_issue_id: Legacy issue ID

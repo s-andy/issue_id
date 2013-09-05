@@ -14,6 +14,9 @@ Rails.configuration.to_prepare do
     unless IssuesController.included_modules.include?(IssueIdsControllerPatch)
         IssuesController.send(:include, IssueIdsControllerPatch)
     end
+    unless IssueRelationsController.included_modules.include?(IssueIdsRelationsControllerPatch)
+        IssueRelationsController.send(:include, IssueIdsRelationsControllerPatch)
+    end
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)
     end
@@ -23,7 +26,24 @@ Rails.configuration.to_prepare do
     unless Issue.included_modules.include?(IssueIdPatch)
         Issue.send(:include, IssueIdPatch)
     end
+
+    Issue.event_options[:title] = Proc.new do |issue|
+        "#{issue.tracker.name} ##{issue.to_param} (#{issue.status}): #{issue.subject}"
+    end
+    Issue.event_options[:url] = Proc.new do |issue|
+        { :controller => 'issues', :action => 'show', :id => issue }
+    end
+
+    Journal.event_options[:title] = Proc.new do |journal|
+        status = ((new_status = journal.new_status) ? " (#{new_status})" : nil)
+        "#{journal.issue.tracker} ##{journal.issue.to_param}#{status}: #{journal.issue.subject}"
+    end
+    Journal.event_options[:url] = Proc.new do |journal|
+        { :controller => 'issues', :action => 'show', :id => journal.issue, :anchor => "change-#{journal.id}" }
+    end
 end
+
+# TODO: issue_relations#create
 
 Redmine::Plugin.register :issue_id do
     name 'ISSUE-id'
