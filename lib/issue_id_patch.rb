@@ -60,7 +60,11 @@ module IssueIdPatch
         end
 
         def quoted_id
-            issue_id.to_i.to_s
+            id
+        end
+
+        def legacy_id
+            id
         end
 
         def to_s_with_issue_id

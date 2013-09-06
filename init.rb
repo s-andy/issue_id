@@ -4,6 +4,13 @@ require_dependency 'issue_id_hook'
 
 Rails.logger.info 'Starting ISSUE-id Plugin for Redmine'
 
+Query.add_available_column(QueryColumn.new(:legacy_id,
+                                           :sortable => "#{Issue.table_name}.id",
+                                           :caption => :label_legacy_id))
+Query.add_available_column(QueryColumn.new(:issue_id, # FIXME Check latest Redmine
+                                           :sortable => [ "#{Issue.table_name}.project_key", "#{Issue.table_name}.issue_number", "#{Issue.table_name}.id" ],
+                                           :caption => :label_id)) if Redmine::VERSION::MAJOR > 1
+
 Rails.configuration.to_prepare do
     unless ApplicationHelper.included_modules.include?(IssueApplicationHelperPatch)
         ApplicationHelper.send(:include, IssueApplicationHelperPatch)
@@ -25,6 +32,9 @@ Rails.configuration.to_prepare do
     end
     unless Issue.included_modules.include?(IssueIdPatch)
         Issue.send(:include, IssueIdPatch)
+    end
+    unless Query.included_modules.include?(IssueQueryPatch)
+        Query.send(:include, IssueQueryPatch)
     end
 
     # TODO: TimelogHelper#render_timelog_breadcrumb

@@ -1,5 +1,7 @@
 ru:
   field_issue_key: Ключ задач
+  label_legacy_id: "Ориг. #"
+  label_id: "#"
   label_issue_key_sharing: Совместное использование ключа
   text_issue_key_sharing: Позволить проектам использовать единый ключ с их подпроектами
   text_issue_key_info: Допускаются только латинские буквы в верхнем регистре (A-Z) и цифры.

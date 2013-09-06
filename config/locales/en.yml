@@ -1,5 +1,7 @@
 en:
   field_issue_key: Issue key
+  label_legacy_id: "Legacy #"
+  label_id: "#"
   label_issue_key_sharing: Issue key sharing
   text_issue_key_sharing: Allow projects to share the issue key with their subprojects
   text_issue_key_info: Only upper case letters (A-Z) and numbers are allowed.
