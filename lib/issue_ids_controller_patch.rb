@@ -7,13 +7,24 @@ module IssueIdsControllerPatch
         base.class_eval do
             unloadable
 
+            prepend_before_filter :detect_moved_issues, :only => :show
+
             after_filter :fix_creation_notice, :only => :create
 
             alias_method_chain :retrieve_previous_and_next_issue_ids, :full_ids
+            # TODO bulk_update (move?)
         end
     end
 
     module InstanceMethods
+
+        def detect_moved_issues
+            if params[:id].include?('-')
+                key, number = params[:id].split('-')
+                moved_issue = MovedIssue.find_by_old_key_and_old_number(key.upcase, number.to_i)
+                redirect_to(:controller => 'issues', :action => 'show', :id => moved_issue.issue, :status => :moved_permanently) if moved_issue
+            end
+        end
 
         def fix_creation_notice
             if @issue.support_issue_id? && flash[:notice] && flash[:notice] =~ %r{#[0-9]+}
