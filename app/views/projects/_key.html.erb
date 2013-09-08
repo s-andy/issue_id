@@ -7,7 +7,7 @@
       <%= l(:text_issue_key_info) %>
     </em>
     <% if @project.children.any? && settings.is_a?(Hash) && settings[:issue_key_sharing] %>
-      <%= check_box_tag('share_issue_key', 1, params[:share_issue_key]) %>
+      <%= form.check_box(:share_issue_key, :no_label => true) %>
       <%= l(:text_use_issue_key_for_subprojects) %>
     <% end %>
   <% end %>

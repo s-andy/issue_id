@@ -8,6 +8,8 @@ module IssueProjectPatch
         base.class_eval do
             unloadable
 
+            attr_accessor :skip_issue_migration
+
             has_one :key, :class_name => 'ProjectIssueKey', :primary_key => :issue_key, :foreign_key => :project_key
 
             validates_length_of :issue_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH, :allow_blank => true
@@ -15,24 +17,36 @@ module IssueProjectPatch
 
             validate :validate_issue_key_duplicates
 
-            after_save :migrate_issue_ids
+            after_save :copy_issue_key_to_subprojects, :migrate_issue_ids
 
-            safe_attributes 'issue_key'
+            safe_attributes 'issue_key', 'share_issue_key'
 
             def issue_key=(key)
                 super if issue_key.blank? || new_record?
             end
 
+            def share_issue_key=(flag)
+                @share_issue_key = (flag.respond_to?(:to_i) ? flag.to_i > 0 : !!flag)
+            end
+
+            def share_issue_key
+                @share_issue_key
+            end
+
+            alias_method :share_issue_key?,      :share_issue_key
+            alias_method :skip_issue_migration?, :skip_issue_migration
         end
     end
 
     module InstanceMethods
 
         def copy_issue_key_to_subprojects
-            if issue_key.present?
+            if issue_key.present? && share_issue_key?
                 children.each do |subproject|
                     if subproject.issue_key.blank?
-                        subproject.issue_key = issue_key
+                        subproject.issue_key            = issue_key
+                        subproject.share_issue_key      = share_issue_key
+                        subproject.skip_issue_migration = true
                         if subproject.save
                             subproject.copy_issue_key_to_subprojects
                         end
@@ -60,7 +74,7 @@ module IssueProjectPatch
         end
 
         def migrate_issue_ids
-            if issue_key.present?
+            if issue_key.present? && !skip_issue_migration?
                 project_key = ProjectIssueKey.find_or_create_by_project_key(issue_key)
                 Issue.all(:conditions => { :project_id => project_key.projects.collect(&:id),
                                            :project_key => nil,
