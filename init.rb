@@ -33,6 +33,9 @@ Rails.configuration.to_prepare do
     unless Query.included_modules.include?(IssueQueryPatch)
         Query.send(:include, IssueQueryPatch)
     end
+    unless Changeset.included_modules.include?(IssueChangesetPatch)
+        Changeset.send(:include, IssueChangesetPatch)
+    end
 
     # TODO: TimelogHelper#render_timelog_breadcrumb
 
@@ -52,7 +55,6 @@ Rails.configuration.to_prepare do
     end
 end
 
-# TODO Changeset#scan_comment_for_issue_ids
 # TODO Mailer#issue_add
 # TODO Mailer#issue_edit
 # TODO auto_completes/issues.html.erb

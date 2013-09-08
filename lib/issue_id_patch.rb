@@ -47,7 +47,6 @@ module IssueIdPatch
             project_key.present? && issue_number.present?
         end
 
-        # FIXME: New issue fails...
         def issue_id
             if support_issue_id?
                 @issue_id ||= IssueID.new(id, project_key, issue_number)
@@ -58,10 +57,6 @@ module IssueIdPatch
 
         def to_param
             issue_id.to_param
-        end
-
-        def quoted_id
-            id
         end
 
         def legacy_id
@@ -84,7 +79,7 @@ module IssueIdPatch
                 moved_issue.save
 
                 # to let generate_issue_id do its job
-                self.project_key = nil
+                self.project_key  = nil
                 self.issue_number = nil
             end
         end
