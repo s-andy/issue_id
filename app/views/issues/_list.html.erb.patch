@@ -1,0 +1,11 @@
+--- /usr/share/redmine/app/views/issues/_list.html.erb	2013-09-03 13:18:06.382199188 +0300
++++ app/views/issues/_list.html.erb	2013-09-03 15:45:28.670112964 +0300
+@@ -27,7 +27,7 @@
+   <% end %>
+   <tr id="issue-<%= issue.id %>" class="hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %>">
+     <td class="checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
+-    <td class="id"><%= link_to issue.id, :controller => 'issues', :action => 'show', :id => issue %></td>
++    <td class="id"><%= link_to issue.to_param, :controller => 'issues', :action => 'show', :id => issue %></td>
+         <% query.columns.each do |column| %><%= content_tag 'td', column_content(column, issue), :class => column.css_classes %><% end %>
+   </tr>
+   <% end -%>

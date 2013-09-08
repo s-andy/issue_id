@@ -12,7 +12,7 @@ module IssueIdsControllerPatch
             after_filter :fix_creation_notice, :only => :create
 
             alias_method_chain :retrieve_previous_and_next_issue_ids, :full_ids
-            # TODO bulk_update (move?)
+            # TODO bulk_update
         end
     end
 
