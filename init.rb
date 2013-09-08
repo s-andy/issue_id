@@ -55,6 +55,7 @@ Rails.configuration.to_prepare do
     end
 end
 
+# TODO Changeset#scan_comment_for_issue_ids
 # TODO Mailer#issue_add
 # TODO Mailer#issue_edit
 # TODO auto_completes/issues.html.erb

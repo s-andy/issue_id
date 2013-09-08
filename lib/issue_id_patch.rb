@@ -47,6 +47,7 @@ module IssueIdPatch
             project_key.present? && issue_number.present?
         end
 
+        # FIXME: New issue fails...
         def issue_id
             if support_issue_id?
                 @issue_id ||= IssueID.new(id, project_key, issue_number)

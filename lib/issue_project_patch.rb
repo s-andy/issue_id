@@ -44,7 +44,7 @@ module IssueProjectPatch
     private
 
         def validate_issue_key_duplicates
-            if issue_key.present?
+            if issue_key.present? && issue_key_changed?
                 project_key = ProjectIssueKey.find_by_project_key(issue_key)
                 if project_key && project_key.projects.any?
                     settings = Setting.plugin_issue_id
