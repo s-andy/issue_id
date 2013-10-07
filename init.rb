@@ -21,6 +21,9 @@ Rails.configuration.to_prepare do
     unless IssueRelationsController.included_modules.include?(IssueIdsRelationsControllerPatch)
         IssueRelationsController.send(:include, IssueIdsRelationsControllerPatch)
     end
+    unless PreviewsController.included_modules.include?(IssueIdsPreviewsControllerPatch)
+        PreviewsController.send(:include, IssueIdsPreviewsControllerPatch)
+    end
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)
     end
@@ -37,8 +40,6 @@ Rails.configuration.to_prepare do
         Changeset.send(:include, IssueChangesetPatch)
     end
 
-    # TODO: TimelogHelper#render_timelog_breadcrumb
-
     Issue.event_options[:title] = Proc.new do |issue|
         "#{issue.tracker.name} ##{issue.to_param} (#{issue.status}): #{issue.subject}"
     end
@@ -54,18 +55,6 @@ Rails.configuration.to_prepare do
         { :controller => 'issues', :action => 'show', :id => journal.issue, :anchor => "change-#{journal.id}" }
     end
 end
-
-# TODO Mailer#issue_add
-# TODO Mailer#issue_edit
-# TODO auto_completes/issues.html.erb
-# TODO issues/bulk_edit.html.erb
-# TODO issues/edit.html.erb
-# TODO mailer/_issue.html.erb
-# TODO mailer/issue_edit.html.erb
-# TODO mailer/reminder.html.erb
-# TODO mailer/issue_add.html.erb
-# TODO journals/diff.html.erb
-# TODO timelog/_form.html.erb
 
 Redmine::Plugin.register :issue_id do
     name 'ISSUE-id'

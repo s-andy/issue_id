@@ -1,5 +1,5 @@
 class MovedIssue < ActiveRecord::Base
-    include Redmine::SafeAttributes
+    include Redmine::SafeAttributes unless Redmine::VERSION::MAJOR == 1 && Redmine::VERSION::MINOR == 0
 
     belongs_to :issue
 
@@ -8,5 +8,5 @@ class MovedIssue < ActiveRecord::Base
     validates_length_of :old_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH
     validates_format_of :old_key, :with => %r{^[A-Z][A-Z0-9]*$}
 
-    safe_attributes 'issue_id', 'old_key', 'old_number'
+    safe_attributes 'issue_id', 'old_key', 'old_number' unless Redmine::VERSION::MAJOR == 1 && Redmine::VERSION::MINOR == 0
 end

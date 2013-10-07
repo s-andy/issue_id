@@ -19,7 +19,7 @@ module IssueProjectPatch
 
             after_save :copy_issue_key_to_subprojects, :migrate_issue_ids
 
-            safe_attributes 'issue_key', 'share_issue_key'
+            safe_attributes 'issue_key', 'share_issue_key' unless Redmine::VERSION::MAJOR == 1 && Redmine::VERSION::MINOR == 0
 
             def issue_key=(key)
                 super if issue_key.blank? || new_record?
