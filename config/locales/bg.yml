@@ -1,0 +1,9 @@
+bg:
+  field_issue_key: Идентификатор на задачите
+  label_legacy_id: "Ориг. #"
+  label_id: "#"
+  label_issue_key_sharing: Съвместно използване на идентификатора
+  text_issue_key_sharing: Използване на общ идентификатор заедно с подпроектите
+  text_issue_key_info: Допускат се само главни латински букви и цифри.
+  text_use_issue_key_for_subprojects: Използване на този ключ за всички налични подпроекти
+  text_legacy_issue_id: Оригинален номер на задачата
