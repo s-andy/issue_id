@@ -15,7 +15,13 @@
         }
       }
     <% else %>
-      // TODO
+      var legacy_issue_id = $('#legacy_issue_id');
+      if (legacy_issue_id) {
+        var authors = $('div.issue p.author');
+        if (authors.length > 0) {
+          authors.first().before(legacy_issue_id.remove());
+        }
+      }
     <% end %>
     //]]>
   </script>

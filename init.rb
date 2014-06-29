@@ -4,12 +4,11 @@ require_dependency 'issue_id_hook'
 
 Rails.logger.info 'Starting ISSUE-id Plugin for Redmine'
 
-Query.add_available_column(QueryColumn.new(:legacy_id,
-                                           :sortable => "#{Issue.table_name}.id",
-                                           :caption => :label_legacy_id))
-Query.add_available_column(QueryColumn.new(:issue_id, # FIXME Check latest Redmine & do we really need it? + IssueQuery?
-                                           :sortable => [ "#{Issue.table_name}.project_key", "#{Issue.table_name}.issue_number", "#{Issue.table_name}.id" ],
-                                           :caption => :label_id)) if Redmine::VERSION::MAJOR > 1
+issue_query = (IssueQuery rescue Query)
+
+issue_query.add_available_column(QueryColumn.new(:legacy_id,
+                                                 :sortable => "#{Issue.table_name}.id",
+                                                 :caption => :label_legacy_id))
 
 Rails.configuration.to_prepare do
     unless ApplicationHelper.included_modules.include?(IssueApplicationHelperPatch)
@@ -27,17 +26,23 @@ Rails.configuration.to_prepare do
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)
     end
-    unless QueriesHelper.included_modules.include?(IssueQueriesHelperPatch) # FIXME
-        QueriesHelper.send(:include, IssueQueriesHelperPatch)
+    if defined?(IssueQuery) # FIXME test
+        unless QueriesHelper.included_modules.include?(IssueQueriesHelperPatch)
+            QueriesHelper.send(:include, IssueQueriesHelperPatch)
+        end
+        unless IssueQuery.included_modules.include?(IssueQueryPatch)
+            IssueQuery.send(:include, IssueQueryPatch)
+        end
+    else
+        unless Query.included_modules.include?(IssueQueryPatch)
+            Query.send(:include, IssueQueryPatch)
+        end
     end
     unless Project.included_modules.include?(IssueProjectPatch)
         Project.send(:include, IssueProjectPatch)
     end
     unless Issue.included_modules.include?(IssueIdPatch)
         Issue.send(:include, IssueIdPatch)
-    end
-    unless IssueQuery.included_modules.include?(IssueQueryPatch) # FIXME Query under Redmine 1.4?
-        IssueQuery.send(:include, IssueQueryPatch)
     end
     unless Changeset.included_modules.include?(IssueChangesetPatch)
         Changeset.send(:include, IssueChangesetPatch)
