@@ -20,6 +20,7 @@
         var authors = $('div.issue p.author');
         if (authors.length > 0) {
           authors.first().before(legacy_issue_id.remove());
+          legacy_issue_id.show();
         }
       }
     <% end %>

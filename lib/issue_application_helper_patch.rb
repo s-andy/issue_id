@@ -17,7 +17,7 @@ module IssueApplicationHelperPatch
         def link_to_issue_with_id(issue, options = {})
             link = link_to_issue_without_id(issue, options)
             if issue.support_issue_id?
-                link.gsub("##{issue.id}", "##{issue.to_param}")
+                link.gsub("##{issue.id}", "##{issue.to_param}").html_safe
             else
                 link
             end

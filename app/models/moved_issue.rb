@@ -1,5 +1,5 @@
 class MovedIssue < ActiveRecord::Base
-    include Redmine::SafeAttributes unless Redmine::VERSION::MAJOR == 1 && Redmine::VERSION::MINOR == 0
+    include Redmine::SafeAttributes unless Redmine::VERSION::MAJOR == 1 && Redmine::VERSION::MINOR == 0 # FIXME
 
     belongs_to :issue
 

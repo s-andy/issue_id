@@ -44,14 +44,22 @@ module IssueChangesetPatch
             referenced_issues = []
 
             comments.scan(/([\s\(\[,-]|^)((#{kw_regexp})[\s:]+)?(##{ISSUE_ID_RE}(\s+@#{Changeset::TIMELOG_RE})?([\s,;&]+##{ISSUE_ID_RE}(\s+@#{Changeset::TIMELOG_RE})?)*)(?=[[:punct:]]|\s|<|$)/i) do |match|
-                action, refs = match[2], match[3]
+                action, refs = match[2].to_s.downcase, match[3]
                 next unless action.present? || ref_keywords_any
                 refs.scan(/#(#{ISSUE_ID_RE})(\s+@#{Changeset::TIMELOG_RE})?/).each do |m|
                     issue, hours = find_referenced_issue_by_full_id(m[0]), m[2]
                     if issue
                         referenced_issues << issue
-                        fix_issue(issue) if fix_keywords.include?(action.to_s.downcase)
-                        log_time(issue, hours) if hours && Setting.commit_logtime_enabled?
+                        unless repository.created_on && committed_on && committed_on < repository.created_on
+                            if fix_keywords.include?(action)
+                                if method(:fix_issue).arity == 2 # FIXME test
+                                    fix_issue(issue, action)
+                                else
+                                    fix_issue(issue)
+                                end
+                            end
+                            log_time(issue, hours) if hours && Setting.commit_logtime_enabled?
+                        end
                     end
                 end
             end

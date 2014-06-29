@@ -13,6 +13,7 @@ module IssueIdsRelationsControllerPatch
 
     module InstanceMethods
 
+        # FIXME auto-completion/hint does not work
         def prepare_issue_to_id
             if params[:relation] && m = params[:relation][:issue_to_id].to_s.strip.match(%r{^#?([A-Z][A-Z0-9]*-[0-9]+)$})
                 begin
