@@ -1,0 +1,5 @@
+<%= raw @issues.map{ |issue|
+      { 'id'    => issue.issue_id,
+        'label' => "#{issue.tracker} ##{issue.issue_id}: #{issue.subject.to_s.truncate(60)}",
+        'value' => issue.to_param }
+    }.to_json %>

@@ -23,6 +23,9 @@ Rails.configuration.to_prepare do
     unless PreviewsController.included_modules.include?(IssueIdsPreviewsControllerPatch)
         PreviewsController.send(:include, IssueIdsPreviewsControllerPatch)
     end
+    unless AutoCompletesController.included_modules.include?(IssueAutoCompletesControllerPatch)
+        AutoCompletesController.send(:include, IssueAutoCompletesControllerPatch)
+    end
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)
     end

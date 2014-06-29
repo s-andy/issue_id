@@ -1,5 +1,5 @@
 class ProjectIssueKey < ActiveRecord::Base
-    include Redmine::SafeAttributes unless Redmine::VERSION::MAJOR == 1 && Redmine::VERSION::MINOR == 0
+    include Redmine::SafeAttributes
 
     has_many :projects, :primary_key => :project_key, :foreign_key => :issue_key
 
@@ -8,7 +8,7 @@ class ProjectIssueKey < ActiveRecord::Base
     validates_length_of :project_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH
     validates_format_of :project_key, :with => %r{^[A-Z][A-Z0-9]*$}, :if => Proc.new { |key| key.project_key_changed? }
 
-    safe_attributes 'project_key' unless Redmine::VERSION::MAJOR == 1 && Redmine::VERSION::MINOR == 0
+    safe_attributes 'project_key'
 
     def reserve_issue_number!
         issue_number = 0
