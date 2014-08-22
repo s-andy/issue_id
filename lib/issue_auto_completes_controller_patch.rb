@@ -31,7 +31,7 @@ module IssueAutoCompletesControllerPatch
                 @issues.compact!
             end
             if Redmine::VERSION::MAJOR == 1
-                render(:action => 'issues_old', :layout => false) # FIXME test
+                render(:action => 'issues_old', :layout => false)
             else
                 render(:layout => false)
             end

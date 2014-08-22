@@ -29,7 +29,7 @@ Rails.configuration.to_prepare do
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)
     end
-    if defined?(IssueQuery) # FIXME test
+    if defined?(IssueQuery)
         unless QueriesHelper.included_modules.include?(IssueQueriesHelperPatch)
             QueriesHelper.send(:include, IssueQueriesHelperPatch)
         end
