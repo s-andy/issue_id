@@ -6,7 +6,7 @@ class ProjectIssueKey < ActiveRecord::Base
     validates_presence_of :project_key
     validates_uniqueness_of :project_key
     validates_length_of :project_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH
-    validates_format_of :project_key, :with => %r{^[A-Z][A-Z0-9]*$}, :if => Proc.new { |key| key.project_key_changed? }
+    validates_format_of :project_key, :with => %r{\A[A-Z][A-Z0-9]*\z}, :if => Proc.new { |key| key.project_key_changed? }
 
     safe_attributes 'project_key'
 
@@ -26,7 +26,7 @@ class ProjectIssueKey < ActiveRecord::Base
     def self.reserve_issue_number!(key)
         issue_number = 0
         transaction do
-            project_issue_key = find_by_project_key(key, :lock => true)
+            project_issue_key = lock(true).find_by_project_key(key)
             unless project_issue_key
                 project_issue_key = new(:project_key => key)
                 project_issue_key.save!

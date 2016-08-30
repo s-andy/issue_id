@@ -25,9 +25,9 @@ module IssueAutoCompletesControllerPatch
                     @issues << scope.find_by_project_key_and_issue_number(@project.issue_key, $1.to_i) if @project
                     @issues << scope.find_by_id($1.to_i)
                 end
-                @issues += scope.find(:all, :conditions => ["LOWER(#{Issue.table_name}.subject) LIKE LOWER(?)", "%#{q}%"],
-                                            :order      => "#{Issue.table_name}.id DESC",
-                                            :limit      => 10)
+                @issues += scope.where(["LOWER(#{Issue.table_name}.subject) LIKE LOWER(?)", "%#{q}%"])
+                                .order("#{Issue.table_name}.id DESC")
+                                .limit(10)
                 @issues.compact!
             end
             if Redmine::VERSION::MAJOR == 1

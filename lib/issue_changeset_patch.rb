@@ -20,7 +20,7 @@ module IssueChangesetPatch
             return nil if id.blank?
             return nil unless id.include?('-')
             key, number = id.split('-')
-            issue = Issue.find_by_project_key_and_issue_number(key.upcase, number.to_i, :include => :project)
+            issue = Issue.joins(:project).find_by_project_key_and_issue_number(key.upcase, number.to_i)
             unless issue
                 moved_issue = MovedIssue.find_by_old_key_and_old_number(key.upcase, number.to_i)
                 issue = moved_issue.issue if moved_issue
@@ -43,7 +43,7 @@ module IssueChangesetPatch
             kw_regexp         = (ref_keywords + fix_keywords).collect{ |kw| Regexp.escape(kw) }.join('|')
             referenced_issues = []
 
-            comments.scan(/([\s\(\[,-]|^)((#{kw_regexp})[\s:]+)?(##{ISSUE_ID_RE}(\s+@#{Changeset::TIMELOG_RE})?([\s,;&]+##{ISSUE_ID_RE}(\s+@#{Changeset::TIMELOG_RE})?)*)(?=[[:punct:]]|\s|<|$)/i) do |match|
+            comments.scan(/([\s\(\[,-]|\A)((#{kw_regexp})[\s:]+)?(##{ISSUE_ID_RE}(\s+@#{Changeset::TIMELOG_RE})?([\s,;&]+##{ISSUE_ID_RE}(\s+@#{Changeset::TIMELOG_RE})?)*)(?=[[:punct:]]|\s|<|\z)/i) do |match|
                 action, refs = match[2].to_s.downcase, match[3]
                 next unless action.present? || ref_keywords_any
                 refs.scan(/#(#{ISSUE_ID_RE})(\s+@#{Changeset::TIMELOG_RE})?/).each do |m|

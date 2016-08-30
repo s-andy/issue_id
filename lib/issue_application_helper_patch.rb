@@ -23,7 +23,7 @@ module IssueApplicationHelperPatch
             end
         end
 
-        ISSUE_ID_RE = %r{([\s\(,\-\[\>]|^)(!)?(#(?:([A-Z][A-Z0-9]*)-)?(\d+))((?:#note)?-(\d+))?(?=(?=[[:punct:]]\W)|,|\s|\]|<|$)}m
+        ISSUE_ID_RE = %r{([\s\(,\-\[\>]|\A)(!)?(#(?:([A-Z][A-Z0-9]*)-)?(\d+))((?:#note)?-(\d+))?(?=(?=[[:punct:]]\W)|,|\s|\]|<|\z)}m
 
         def parse_redmine_links_with_issue_id(text, project, obj, attr, only_path, options)
             text.gsub!(ISSUE_ID_RE) do |m|
@@ -31,9 +31,9 @@ module IssueApplicationHelperPatch
                 link = nil
                 if esc.nil?
                     if key.nil?
-                        issue = Issue.visible.find_by_id(number.to_i, :include => :status)
+                        issue = Issue.visible.joins(:status).find_by_id(number.to_i)
                     else
-                        issue = Issue.visible.find_by_project_key_and_issue_number(key.upcase, number.to_i, :include => :status)
+                        issue = Issue.visible.joins(:status).find_by_project_key_and_issue_number(key.upcase, number.to_i)
                         unless issue
                             moved_issue = MovedIssue.find_by_old_key_and_old_number(key.upcase, number.to_i)
                             issue = moved_issue.issue if moved_issue && moved_issue.issue.visible?
