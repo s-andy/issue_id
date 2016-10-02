@@ -75,7 +75,7 @@ module IssueProjectPatch
 
         def migrate_issue_ids
             if issue_key.present? && !skip_issue_migration?
-                project_key = ProjectIssueKey.find_or_create_by_project_key(issue_key)
+                project_key = ProjectIssueKey.find_or_create_by(:project_key => issue_key)
                 Issue.where(:project_id   => project_key.projects.collect(&:id),
                             :project_key  => nil,
                             :issue_number => nil)
