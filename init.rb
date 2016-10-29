@@ -12,7 +12,7 @@ issue_query.add_available_column(QueryColumn.new(:legacy_id,
 
 Rails.configuration.to_prepare do
     unless Rails.application.routes.url_helpers.included_modules.include?(IssueRouterHelper)
-         Rails.application.routes.url_helpers.send(:include, IssueRouterHelper)
+        Rails.application.routes.url_helpers.send(:include, IssueRouterHelper)
     end
     unless ApplicationHelper.included_modules.include?(IssueApplicationHelperPatch)
         ApplicationHelper.send(:include, IssueApplicationHelperPatch)
