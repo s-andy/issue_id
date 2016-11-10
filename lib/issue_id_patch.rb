@@ -15,6 +15,9 @@ module IssueIdPatch
             after_save :create_moved_issue, :generate_issue_id
 
             alias_method_chain :to_s, :issue_id
+
+            alias_method_chain :safe_attributes=, :issue_id
+            alias_method_chain :parent_issue_id=, :full_id
         end
     end
 
@@ -39,10 +42,41 @@ module IssueIdPatch
             end
         end
 
+        def find_legacy_id_by_project_key_and_issue_number(key, number)
+            issue = find_by_project_key_and_issue_number(key.upcase, number.to_i)
+            return issue.id if issue
+
+            moved_issue = MovedIssue.find_by_old_key_and_old_number(key.upcase, number.to_i)
+            return moved_issue.issue.id if moved_issue
+        end
+
     end
 
     module InstanceMethods
 
+        def safe_attributes_with_issue_id=(attrs, user = User.current)
+            if attrs.is_a?(Hash) && attrs['parent_issue_id'].present? &&
+               attrs['parent_issue_id'].is_a?(String) && attrs['parent_issue_id'].include?('-')
+                key, number = attrs['parent_issue_id'].split('-')
+
+                legacy_id = self.class.find_legacy_id_by_project_key_and_issue_number(key.gsub(%r{^#}, ''), number)
+                attrs['parent_issue_id'] = legacy_id if legacy_id
+            end
+
+            send(:safe_attributes_without_issue_id=, attrs, user)
+        end
+
+        def parent_issue_id_with_full_id=(arg)
+            if arg.is_a?(String) && arg.include?('-')
+                key, number = arg.strip.split('-')
+                
+                legacy_id = self.class.find_legacy_id_by_project_key_and_issue_number(key.gsub(%r{^#}, ''), number)
+                arg = legacy_id if legacy_id
+            end
+
+            send(:parent_issue_id_without_full_id=, arg)
+        end
+        
         def support_issue_id?
             project_key.present? && issue_number.present?
         end
