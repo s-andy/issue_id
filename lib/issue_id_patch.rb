@@ -18,6 +18,7 @@ module IssueIdPatch
 
             alias_method_chain :safe_attributes=, :issue_id
             alias_method_chain :parent_issue_id=, :full_id
+            alias_method_chain :parent_issue_id,  :full_id
         end
     end
 
@@ -77,6 +78,14 @@ module IssueIdPatch
             send(:parent_issue_id_without_full_id=, arg)
         end
         
+        def parent_issue_id_with_full_id
+            if instance_variable_defined?(:@parent_issue)
+                @parent_issue.nil? ? nil : @parent_issue.issue_id
+            else
+                parent_issue_id_without_full_id
+            end
+        end
+
         def support_issue_id?
             project_key.present? && issue_number.present?
         end
