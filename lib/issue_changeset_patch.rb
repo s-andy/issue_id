@@ -25,8 +25,7 @@ module IssueChangesetPatch
                 moved_issue = MovedIssue.find_by_old_key_and_old_number(key.upcase, number.to_i)
                 issue = moved_issue.issue if moved_issue
             end
-            return issue if Setting.commit_cross_project_ref?
-            if issue
+            if issue && !Setting.commit_cross_project_ref?
                 retur nil unless issue.project &&
                                 (project == issue.project || project.is_ancestor_of?(issue.project) ||
                                  project.is_descendant_of?(issue.project))
@@ -39,7 +38,7 @@ module IssueChangesetPatch
             return if comments.blank?
             ref_keywords      = Setting.commit_ref_keywords.downcase.split(',').collect(&:strip)
             ref_keywords_any  = ref_keywords.delete('*')
-            fix_keywords      = Setting.commit_fix_keywords.downcase.split(',').collect(&:strip)
+            fix_keywords      = Setting.commit_update_keywords_array.map{ |r| r['keywords'] }.flatten.compact
             kw_regexp         = (ref_keywords + fix_keywords).collect{ |kw| Regexp.escape(kw) }.join('|')
             referenced_issues = []
 
@@ -48,16 +47,10 @@ module IssueChangesetPatch
                 next unless action.present? || ref_keywords_any
                 refs.scan(/#(#{ISSUE_ID_RE})(\s+@#{Changeset::TIMELOG_RE})?/).each do |m|
                     issue, hours = find_referenced_issue_by_full_id(m[0]), m[2]
-                    if issue
+                    if issue && (!respond_to?(:issue_linked_to_same_commit?) || !issue_linked_to_same_commit?(issue))
                         referenced_issues << issue
                         unless repository.created_on && committed_on && committed_on < repository.created_on
-                            if fix_keywords.include?(action)
-                                if method(:fix_issue).arity == 2 # FIXME test
-                                    fix_issue(issue, action)
-                                else
-                                    fix_issue(issue)
-                                end
-                            end
+                            fix_issue(issue, action) if fix_keywords.include?(action)
                             log_time(issue, hours) if hours && Setting.commit_logtime_enabled?
                         end
                     end

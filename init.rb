@@ -32,6 +32,11 @@ Rails.configuration.to_prepare do
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)
     end
+    unless Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR == 0)
+        unless JournalsHelper.included_modules.include?(IssueJournalsHelperPatch)
+            JournalsHelper.send(:include, IssueJournalsHelperPatch)
+        end
+    end
     if defined?(IssueQuery)
         unless QueriesHelper.included_modules.include?(IssueQueriesHelperPatch)
             QueriesHelper.send(:include, IssueQueriesHelperPatch)
