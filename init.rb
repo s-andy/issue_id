@@ -58,6 +58,9 @@ Rails.configuration.to_prepare do
     unless Changeset.included_modules.include?(IssueChangesetPatch)
         Changeset.send(:include, IssueChangesetPatch)
     end
+    unless MailHandler.included_modules.include?(IssueMailHandlerPatch)
+        MailHandler.send(:include, IssueMailHandlerPatch)
+    end
 
     Issue.event_options[:title] = Proc.new do |issue|
         "#{issue.tracker.name} ##{issue.to_param} (#{issue.status}): #{issue.subject}"
