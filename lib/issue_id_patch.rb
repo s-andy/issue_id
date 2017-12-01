@@ -19,6 +19,7 @@ module IssueIdPatch
             alias_method_chain :safe_attributes=, :issue_id
             alias_method_chain :parent_issue_id=, :full_id
             alias_method_chain :parent_issue_id,  :full_id
+            alias_method_chain :copy_from,        :issue_id
         end
     end
 
@@ -84,6 +85,15 @@ module IssueIdPatch
             else
                 parent_issue_id_without_full_id
             end
+        end
+
+        def copy_from_with_issue_id(arg, options={})
+            result = copy_from_without_issue_id(arg, options)
+
+            self.project_key  = nil
+            self.issue_number = nil
+
+            result
         end
 
         def support_issue_id?

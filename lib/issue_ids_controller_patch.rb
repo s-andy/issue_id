@@ -11,6 +11,7 @@ module IssueIdsControllerPatch
 
             after_filter :fix_creation_notice, :only => :create
 
+            alias_method_chain :build_new_issue_from_params,          :full_ids
             alias_method_chain :retrieve_previous_and_next_issue_ids, :full_ids
         end
     end
@@ -29,6 +30,14 @@ module IssueIdsControllerPatch
             if @issue.support_issue_id? && flash[:notice] && flash[:notice] =~ %r{#[0-9]+}
                 flash[:notice] = l(:notice_issue_successful_create, :id => "<a href=\"#{issue_path(@issue)}\">##{@issue.to_param}</a>")
             end
+        end
+
+        def build_new_issue_from_params_with_full_ids
+            if params[:copy_from] && params[:copy_from].include?('-')
+                key, number = params[:copy_from].split('-')
+                params[:copy_from] = Issue.find_legacy_id_by_project_key_and_issue_number(key, number)
+            end
+            build_new_issue_from_params_without_full_ids
         end
 
         def retrieve_previous_and_next_issue_ids_with_full_ids
