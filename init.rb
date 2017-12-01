@@ -14,6 +14,9 @@ Rails.configuration.to_prepare do
     unless Rails.application.routes.url_helpers.included_modules.include?(IssueRouterHelper)
         Rails.application.routes.url_helpers.send(:include, IssueRouterHelper)
     end
+    unless ApplicationController.included_modules.include?(IssueApplicationControllerPatch)
+        ApplicationController.send(:include, IssueApplicationControllerPatch)
+    end
     unless ApplicationHelper.included_modules.include?(IssueApplicationHelperPatch)
         ApplicationHelper.send(:include, IssueApplicationHelperPatch)
     end
