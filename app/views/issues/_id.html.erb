@@ -5,25 +5,14 @@
                                 :style => 'display: none;') %>
   <script type="text/javascript">
     //<![CDATA[
-    <% if defined? observe_field %>
-      var legacy_issue_id = $('legacy_issue_id');
-      if (legacy_issue_id) {
-        var authors = $$('div.issue p.author');
-        if (authors.length > 0) {
-            authors.first().insert({ before: legacy_issue_id.remove() });
-            legacy_issue_id.show();
-        }
+    var legacy_issue_id = $('#legacy_issue_id');
+    if (legacy_issue_id) {
+      var authors = $('div.issue p.author');
+      if (authors.length > 0) {
+        authors.first().before(legacy_issue_id.remove());
+        legacy_issue_id.show();
       }
-    <% else %>
-      var legacy_issue_id = $('#legacy_issue_id');
-      if (legacy_issue_id) {
-        var authors = $('div.issue p.author');
-        if (authors.length > 0) {
-          authors.first().before(legacy_issue_id.remove());
-          legacy_issue_id.show();
-        }
-      }
-    <% end %>
+    }
     //]]>
   </script>
 <% end %>

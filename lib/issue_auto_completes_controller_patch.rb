@@ -34,11 +34,7 @@ module IssueAutoCompletesControllerPatch
                                 .limit(10).to_a
                 @issues.compact!
             end
-            if Redmine::VERSION::MAJOR == 1
-                render(:action => 'issues_old', :layout => false)
-            else
-                render(:layout => false)
-            end
+            render(:layout => false)
         end
 
     end

@@ -14,10 +14,6 @@
 </p>
 <script type="text/javascript">
   //<![CDATA[
-  <% if defined? observe_field %>
-    $('project_identifier').up('p').insert({ after: $('project_issue_key').up('p').remove() });
-  <% else %>
-    $('#project_identifier').closest('p').after($('#project_issue_key').closest('p').remove());
-  <% end %>
+  $('#project_identifier').closest('p').after($('#project_issue_key').closest('p').remove());
   //]]>
 </script>

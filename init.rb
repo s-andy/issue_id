@@ -4,11 +4,9 @@ require_dependency 'issue_id_hook'
 
 Rails.logger.info 'Starting ISSUE-id Plugin for Redmine'
 
-issue_query = (IssueQuery rescue Query)
-
-issue_query.add_available_column(QueryColumn.new(:legacy_id,
-                                                 :sortable => "#{Issue.table_name}.id",
-                                                 :caption => :label_legacy_id))
+IssueQuery.add_available_column(QueryColumn.new(:legacy_id,
+                                                :sortable => "#{Issue.table_name}.id",
+                                                :caption => :label_legacy_id))
 
 Rails.configuration.to_prepare do
     unless Rails.application.routes.url_helpers.included_modules.include?(IssueRouterHelper)
@@ -40,17 +38,11 @@ Rails.configuration.to_prepare do
             JournalsHelper.send(:include, IssueJournalsHelperPatch)
         end
     end
-    if defined?(IssueQuery)
-        unless QueriesHelper.included_modules.include?(IssueQueriesHelperPatch)
-            QueriesHelper.send(:include, IssueQueriesHelperPatch)
-        end
-        unless IssueQuery.included_modules.include?(IssueQueryPatch)
-            IssueQuery.send(:include, IssueQueryPatch)
-        end
-    else
-        unless Query.included_modules.include?(IssueQueryPatch)
-            Query.send(:include, IssueQueryPatch)
-        end
+    unless QueriesHelper.included_modules.include?(IssueQueriesHelperPatch)
+        QueriesHelper.send(:include, IssueQueriesHelperPatch)
+    end
+    unless IssueQuery.included_modules.include?(IssueQueryPatch)
+       IssueQuery.send(:include, IssueQueryPatch)
     end
     unless Project.included_modules.include?(IssueProjectPatch)
         Project.send(:include, IssueProjectPatch)
@@ -85,9 +77,9 @@ Redmine::Plugin.register :issue_id do
     name 'ISSUE-id'
     author 'Andriy Lesyuk'
     author_url 'http://www.andriylesyuk.com/'
-    description 'Adds support for issue ids in format: CODE-number.'
+    description 'Adds support for issue ids in format: KEY-number.'
     url 'http://projects.andriylesyuk.com/projects/issue-id'
-    version '0.0.1b'
+    version '0.0.2'
 
     settings :default => {
         :issue_key_sharing => false

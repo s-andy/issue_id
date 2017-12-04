@@ -71,14 +71,14 @@ module IssueIdPatch
         def parent_issue_id_with_full_id=(arg)
             if arg.is_a?(String) && arg.include?('-')
                 key, number = arg.strip.split('-')
-                
+
                 legacy_id = self.class.find_legacy_id_by_project_key_and_issue_number(key.gsub(%r{^#}, ''), number)
                 arg = legacy_id if legacy_id
             end
 
             send(:parent_issue_id_without_full_id=, arg)
         end
-        
+
         def parent_issue_id_with_full_id
             if instance_variable_defined?(:@parent_issue)
                 @parent_issue.nil? ? nil : @parent_issue.issue_id
