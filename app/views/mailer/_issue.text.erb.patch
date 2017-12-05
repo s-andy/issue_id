@@ -1,0 +1,8 @@
+--- /usr/share/redmine/app/views/mailer/_issue.text.erb	2016-10-10 10:48:13.000000000 +0300
++++ app/views/mailer/_issue.text.erb	2017-12-05 18:43:29.821929503 +0200
+@@ -1,4 +1,4 @@
+-<%= "#{issue.tracker.name} ##{issue.id}: #{issue.subject}" %>
++<%= "#{issue.tracker.name} ##{issue.to_param}: #{issue.subject}" %>
+ <%= issue_url %>
+ 
+ <%= render_email_issue_attributes(issue, users.first) %>

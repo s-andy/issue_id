@@ -1,0 +1,11 @@
+--- /usr/share/redmine/app/views/mailer/issue_edit.html.erb	2016-10-10 10:48:13.000000000 +0300
++++ app/views/mailer/issue_edit.html.erb	2017-12-05 18:46:03.633501155 +0200
+@@ -1,7 +1,7 @@
+ <% if @journal.private_notes? %>
+   (<%= l(:field_private_notes) %>)
+ <% end %>
+-<%= l(:text_issue_updated, :id => link_to("##{@issue.id}", @issue_url), :author => h(@journal.user)).html_safe %>
++<%= l(:text_issue_updated, :id => link_to("##{@issue.to_param}", @issue_url), :author => h(@journal.user)).html_safe %>
+ 
+ <ul>
+ <% details_to_strings(@journal_details, false, :only_path => false).each do |string| %>

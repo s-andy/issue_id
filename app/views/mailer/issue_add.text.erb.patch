@@ -1,0 +1,8 @@
+--- /usr/share/redmine/app/views/mailer/issue_add.text.erb	2016-10-10 10:48:13.000000000 +0300
++++ app/views/mailer/issue_add.text.erb	2017-12-05 18:45:56.113327517 +0200
+@@ -1,4 +1,4 @@
+-<%= l(:text_issue_added, :id => "##{@issue.id}", :author => @issue.author) %>
++<%= l(:text_issue_added, :id => "##{@issue.to_param}", :author => @issue.author) %>
+ 
+ ----------------------------------------
+ <%= render :partial => 'issue', :formats => [:text], :locals => { :issue => @issue, :users => @users, :issue_url => @issue_url } %>
