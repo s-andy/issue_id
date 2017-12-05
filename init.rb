@@ -30,6 +30,9 @@ Rails.configuration.to_prepare do
     unless AutoCompletesController.included_modules.include?(IssueAutoCompletesControllerPatch)
         AutoCompletesController.send(:include, IssueAutoCompletesControllerPatch)
     end
+    unless RepositoriesController.included_modules.include?(IssueRepositoriesControllerPatch)
+        RepositoriesController.send(:include, IssueRepositoriesControllerPatch)
+    end
     unless Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR < 3)
         unless WatchersController.included_modules.include?(IssueWatchersControllerPatch)
             WatchersController.send(:include, IssueWatchersControllerPatch)
