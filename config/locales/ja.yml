@@ -1,0 +1,9 @@
+ja:
+  field_issue_key: チケット接頭辞
+  label_legacy_id: "旧 #"
+  label_id: "#"
+  label_issue_key_sharing: チケット接頭辞の共有
+  text_issue_key_sharing: チケット接頭辞をサブプロジェクトとも共有することを許可
+  text_issue_key_info: アルファベット大文字 (A-Z)・数字だけが使えます。
+  text_use_issue_key_for_subprojects: このチケット接頭辞をサブプロジェクトでも使う
+  text_legacy_issue_id: 旧式のチケット番号

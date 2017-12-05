@@ -43,11 +43,25 @@ module IssueIdsControllerPatch
         def retrieve_previous_and_next_issue_ids_with_full_ids
             retrieve_previous_and_next_issue_ids_without_full_ids
             if @prev_issue_id
-                prev_issue = Issue.find_by_id(@prev_issue_id)
+                if @prev_issue_id.zero?
+                    if params[:prev_issue_id] && params[:prev_issue_id].include?('-')
+                        key, number = params[:prev_issue_id].split('-')
+                        prev_issue  = Issue.find_by_project_key_and_issue_number(key, number)
+                    end
+                else
+                    prev_issue = Issue.find_by_id(@prev_issue_id || params[:prev_issue_id])
+                end
                 @prev_issue_id = prev_issue.issue_id if prev_issue
             end
             if @next_issue_id
-                next_issue = Issue.find_by_id(@next_issue_id)
+                if @next_issue_id.zero?
+                    if params[:next_issue_id] && params[:next_issue_id].include?('-')
+                        key, number = params[:next_issue_id].split('-')
+                        next_issue  = Issue.find_by_project_key_and_issue_number(key, number)
+                    end
+                else
+                    next_issue = Issue.find_by_id(@next_issue_id || params[:next_issue_id])
+                end
                 @next_issue_id = next_issue.issue_id if next_issue
             end
         end

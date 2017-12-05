@@ -12,14 +12,15 @@ module IssueIdPatch
             validates_length_of :project_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH, :allow_blank => true
             validates_format_of :project_key, :with => %r{\A[A-Z][A-Z0-9]*\z}, :allow_blank => true
 
-            after_save :create_moved_issue, :generate_issue_id
+            after_save :create_moved_issue, :generate_issue_id, :send_notification_with_full_id
 
             alias_method_chain :to_s, :issue_id
 
-            alias_method_chain :safe_attributes=, :issue_id
-            alias_method_chain :parent_issue_id=, :full_id
-            alias_method_chain :parent_issue_id,  :full_id
-            alias_method_chain :copy_from,        :issue_id
+            alias_method_chain :safe_attributes=,  :issue_id
+            alias_method_chain :parent_issue_id=,  :full_id
+            alias_method_chain :parent_issue_id,   :full_id
+            alias_method_chain :copy_from,         :issue_id
+            alias_method_chain :send_notification, :delay
         end
     end
 
@@ -94,6 +95,14 @@ module IssueIdPatch
             self.issue_number = nil
 
             result
+        end
+
+        def send_notification_with_delay
+            @delayed_notification = true
+        end
+
+        def send_notification_with_full_id
+            send_notification_without_delay if @delayed_notification
         end
 
         def support_issue_id?

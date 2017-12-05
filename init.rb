@@ -30,6 +30,11 @@ Rails.configuration.to_prepare do
     unless AutoCompletesController.included_modules.include?(IssueAutoCompletesControllerPatch)
         AutoCompletesController.send(:include, IssueAutoCompletesControllerPatch)
     end
+    unless Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR < 3)
+        unless WatchersController.included_modules.include?(IssueWatchersControllerPatch)
+            WatchersController.send(:include, IssueWatchersControllerPatch)
+        end
+    end
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)
     end
@@ -52,6 +57,9 @@ Rails.configuration.to_prepare do
     end
     unless Changeset.included_modules.include?(IssueChangesetPatch)
         Changeset.send(:include, IssueChangesetPatch)
+    end
+    unless Mailer.included_modules.include?(IssueIdsMailerPatch)
+        Mailer.send(:include, IssueIdsMailerPatch)
     end
     unless MailHandler.included_modules.include?(IssueMailHandlerPatch)
         MailHandler.send(:include, IssueMailHandlerPatch)
