@@ -12,9 +12,6 @@ Rails.configuration.to_prepare do
     unless Rails.application.routes.url_helpers.included_modules.include?(IssueRouterHelper)
         Rails.application.routes.url_helpers.send(:include, IssueRouterHelper)
     end
-    unless ApplicationController.included_modules.include?(IssueApplicationControllerPatch)
-        ApplicationController.send(:include, IssueApplicationControllerPatch)
-    end
     unless ApplicationHelper.included_modules.include?(IssueApplicationHelperPatch)
         ApplicationHelper.send(:include, IssueApplicationHelperPatch)
     end
@@ -29,14 +26,6 @@ Rails.configuration.to_prepare do
     end
     unless AutoCompletesController.included_modules.include?(IssueAutoCompletesControllerPatch)
         AutoCompletesController.send(:include, IssueAutoCompletesControllerPatch)
-    end
-    unless RepositoriesController.included_modules.include?(IssueRepositoriesControllerPatch)
-        RepositoriesController.send(:include, IssueRepositoriesControllerPatch)
-    end
-    unless Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR < 3)
-        unless WatchersController.included_modules.include?(IssueWatchersControllerPatch)
-            WatchersController.send(:include, IssueWatchersControllerPatch)
-        end
     end
     unless IssuesHelper.included_modules.include?(IssueIdsHelperPatch)
         IssuesHelper.send(:include, IssueIdsHelperPatch)

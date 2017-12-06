@@ -45,6 +45,33 @@ module IssueIdPatch
             end
         end
 
+        def find_by_id(id)
+            if id.is_a?(String) && id.include?('-')
+                key, number = id.split('-')
+                find_by_project_key_and_issue_number(key.upcase, number.to_i)
+            else
+                find_by(:id => id)
+            end
+        end
+
+        def where(*args)
+            if args.first && args.first.is_a?(Hash) && args.first.key?(:id)
+                if args.first[:id].is_a?(Array) && args.first[:id].count == 1
+                    issue_id = args.first[:id].first
+                else
+                    issue_id = args.first[:id]
+                end
+                if issue_id.is_a?(String) && issue_id.include?('-')
+                    key, number = issue_id.split('-')
+
+                    args.first[:project_key]  = key.upcase
+                    args.first[:issue_number] = number.to_i
+                    args.first.delete(:id)
+                end
+            end
+            super
+        end
+
         def find_legacy_id_by_project_key_and_issue_number(key, number)
             issue = find_by_project_key_and_issue_number(key.upcase, number.to_i)
             return issue.id if issue
