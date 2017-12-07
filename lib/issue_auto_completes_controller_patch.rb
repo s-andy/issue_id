@@ -17,11 +17,24 @@ module IssueAutoCompletesControllerPatch
         def issues_with_ids
             @issues = []
             q = (params[:q] || params[:term]).to_s.strip
+            status = params[:status].to_s
+            issue_id = params[:issue_id].to_s
             if q.present?
                 if Issue.respond_to?(:cross_project_scope)
                     scope = Issue.cross_project_scope(@project, params[:scope]).visible
                 else # Redmine < 3.x
                     scope = (params[:scope] == "all" || @project.nil? ? Issue : @project.issues).visible
+                end
+                if status.present?
+                    scope = scope.open(status == 'o')
+                end
+                if issue_id.present?
+                    if issue_id.include?('-')
+                        key, number = arg.strip.split('-')
+                        scope = scope.where.not(:project_key => key.upcase, :issue_number => number.to_i)
+                    else
+                        scope = scope.where.not(:id => issue_id.to_i)
+                    end
                 end
                 if q.match(%r{\A#?([A-Z][A-Z0-9]*)-(\d+)\z})
                     @issues << scope.find_by_project_key_and_issue_number($1.upcase, $2.to_i)

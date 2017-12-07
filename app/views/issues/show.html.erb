@@ -11,7 +11,11 @@
                      :title => "##{@prev_issue_id}",
                      :accesskey => accesskey(:previous) %> |
       <% if @issue_position && @issue_count %>
-        <span class="position"><%= l(:label_item_position, :position => @issue_position, :count => @issue_count) %></span> |
+        <span class="position">
+          <%= link_to_if @query_path,
+                         l(:label_item_position, :position => @issue_position, :count => @issue_count),
+                         @query_path %>
+        </span> |
       <% end %>
       <%= link_to_if @next_issue_id,
                      "#{l(:label_next)} \xc2\xbb",
@@ -21,7 +25,14 @@
     </div>
   <% end %>
 
+ <% if Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR < 4) %>
   <%= avatar(@issue.author, :size => "50") %>
+ <% else %>
+  <div class="gravatar-with-child">
+    <%= avatar(@issue.author, :size => "50", :title => l(:field_author)) %>
+    <%= avatar(@issue.assigned_to, :size => "22", :class => "gravatar gravatar-child", :title => l(:field_assigned_to)) if @issue.assigned_to %>
+  </div>
+ <% end %>
 
 <div class="subject">
 <%= render_issue_subject_with_tree(@issue) %>
@@ -43,7 +54,11 @@
   rows.left l(:field_priority), @issue.priority.name, :class => 'priority'
 
   unless @issue.disabled_core_fields.include?('assigned_to_id')
+   if Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR < 4)
     rows.left l(:field_assigned_to), avatar(@issue.assigned_to, :size => "14").to_s.html_safe + (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
+   else
+    rows.left l(:field_assigned_to), (@issue.assigned_to ? link_to_user(@issue.assigned_to) : "-"), :class => 'assigned-to'
+   end
   end
   unless @issue.disabled_core_fields.include?('category_id') || (@issue.category.nil? && @issue.project.issue_categories.none?)
     rows.left l(:field_category), (@issue.category ? @issue.category.name : "-"), :class => 'category'
@@ -72,19 +87,21 @@
     end
    end
   end
- if User.current.respond_to?(:allowed_to_view_all_time_entries)
-  if User.current.allowed_to_view_all_time_entries?(@project)
+  if User.current.allowed_to?(:view_time_entries, @project)
+   if defined? issue_spent_hours_details
     if @issue.total_spent_hours > 0
       rows.right l(:label_spent_time), issue_spent_hours_details(@issue), :class => 'spent-time'
     end
-  end
- else
-  if User.current.allowed_to?(:view_time_entries, @project)
+   else
     rows.right l(:label_spent_time), (@issue.total_spent_hours > 0 ? link_to(l_hours(@issue.total_spent_hours), project_issue_time_entries_path(@project, @issue)) : "-"), :class => 'spent-time'
+   end
   end
- end
 end %>
+<% if defined? render_half_width_custom_fields_rows %>
+<%= render_half_width_custom_fields_rows(@issue) %>
+<% else %>
 <%= render_custom_fields_rows(@issue) %>
+<% end %>
 <%= call_hook(:view_issues_show_details_bottom, :issue => @issue) %>
 <% if Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR < 2) %>
 </table>
@@ -97,7 +114,11 @@ end %>
 <% if @issue.description? %>
 <div class="description">
   <div class="contextual">
+  <% if @issue.respond_to?(:notes_addable?) %>
+  <%= link_to l(:button_quote), issue_id_quoted_issue_path(@issue), :remote => true, :method => 'post', :class => 'icon icon-comment' if @issue.notes_addable? %>
+  <% else %>
   <%= link_to l(:button_quote), issue_id_quoted_issue_path(@issue), :remote => true, :method => 'post', :class => 'icon icon-comment' if authorize_for('issues', 'edit') %>
+  <% end %>
   </div>
 
   <p><strong><%=l(:field_description)%></strong></p>
@@ -109,6 +130,10 @@ end %>
 <%= link_to_attachments @issue, :thumbnails => true %>
 <% end -%>
 
+<% if defined? render_full_width_custom_fields_rows %>
+<%= render_full_width_custom_fields_rows(@issue) %>
+<% end %>
+
 <%= call_hook(:view_issues_show_description_bottom, :issue => @issue) %>
 
 <% if !@issue.leaf? || User.current.allowed_to?(:manage_subtasks, @project) %>
@@ -118,7 +143,13 @@ end %>
   <%= link_to_new_subtask(@issue) if User.current.allowed_to?(:manage_subtasks, @project) %>
 </div>
 <p><strong><%=l(:label_subtask_plural)%></strong></p>
+<% if method(:context_menu).arity == 1 %>
 <%= render_descendants_tree(@issue) unless @issue.leaf? %>
+<% else %>
+<%= form_tag({}, :data => {:cm_url => issues_context_menu_path}) do %>
+<%= render_descendants_tree(@issue) unless @issue.leaf? %>
+<% end %>
+<% end %>
 </div>
 <% end %>
 
@@ -179,4 +210,8 @@ end %>
     <%= auto_discovery_link_tag(:atom, {:format => 'atom', :key => User.current.rss_key}, :title => "#{@issue.project} - #{@issue.tracker} ##{@issue.id}: #{@issue.subject}") %>
 <% end %>
 
+<% if method(:context_menu).arity == 1 %>
 <%= context_menu issues_context_menu_path %>
+<% else %>
+<%= context_menu %>
+<% end %>

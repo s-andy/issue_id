@@ -1,3 +1,6 @@
+div.issue div.subject {
+    line-height: 1.4;
+}
 #legacy_issue_id {
     margin: 10px 10px;
     float: right;
