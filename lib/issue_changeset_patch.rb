@@ -27,13 +27,13 @@ module IssueChangesetPatch
                 issue = moved_issue.issue if moved_issue
             end
             if issue && !Setting.commit_cross_project_ref?
-                retur nil unless issue.project &&
-                                (project == issue.project || project.is_ancestor_of?(issue.project) ||
-                                 project.is_descendant_of?(issue.project))
+                return nil unless issue.project &&
+                                 (project == issue.project || project.is_ancestor_of?(issue.project) ||
+                                  project.is_descendant_of?(issue.project))
             end
             issue
         end
-        
+
         def find_referenced_issue_by_id_with_full_id(id)
             if id.present? && id.include?('-')
                 find_referenced_issue_by_full_id(id)
