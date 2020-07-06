@@ -7,7 +7,7 @@ module IssueIdsPreviewsControllerPatch
         base.class_eval do
             unloadable
 
-            before_filter :prepare_issue_id, :only => :issue
+            before_action :prepare_issue_id, :only => :issue
         end
     end
 

@@ -7,8 +7,10 @@ module IssueApplicationHelperPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :link_to_issue,       :id
-            alias_method_chain :parse_redmine_links, :issue_id
+            alias_method :link_to_issue_without_id, :link_to_issue
+            alias_method :link_to_issue, :link_to_issue_with_id
+            alias_method :parse_redmine_links_without_issue_id, :parse_redmine_links
+            alias_method :parse_redmine_links, :parse_redmine_links_with_issue_id
         end
     end
 

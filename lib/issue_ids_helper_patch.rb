@@ -7,7 +7,8 @@ module IssueIdsHelperPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :issue_heading, :full_id
+            alias_method :issue_heading_without_full_id, :issue_heading
+            alias_method :issue_heading, :issue_heading_with_full_id
         end
     end
 

@@ -7,7 +7,7 @@ module IssueIdsRelationsControllerPatch
         base.class_eval do
             unloadable
 
-            before_filter :prepare_issue_to_id, :only => :create
+            before_action :prepare_issue_to_id, :only => :create
         end
     end
 

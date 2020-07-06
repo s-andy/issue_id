@@ -7,7 +7,8 @@ module IssueMailHandlerPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :dispatch, :issue_id
+            alias_method :dispatch_without_issue_id, :dispatch
+            alias_method :dispatch, :dispatch_with_issue_id
         end
     end
 

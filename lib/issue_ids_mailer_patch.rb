@@ -7,8 +7,10 @@ module IssueIdsMailerPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :issue_add,  :full_id
-            alias_method_chain :issue_edit, :full_id
+            alias_method :issue_add_without_full_id, :issue_add
+            alias_method :issue_add, :issue_add_with_full_id
+            alias_method :issue_edit_without_full_id, :issue_edit
+            alias_method :issue_edit, :issue_edit_with_full_id
         end
     end
 

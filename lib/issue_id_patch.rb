@@ -1,5 +1,6 @@
 require_dependency 'issue'
 
+
 module IssueIdPatch
 
     def self.included(base)
@@ -14,13 +15,19 @@ module IssueIdPatch
 
             after_save :create_moved_issue, :generate_issue_id, :send_notification_with_full_id
 
-            alias_method_chain :to_s, :issue_id
+            alias_method :to_s_without_issue_id, :to_s
+            alias_method :to_s, :to_s_with_issue_id
 
-            alias_method_chain :safe_attributes=,  :issue_id
-            alias_method_chain :parent_issue_id=,  :full_id
-            alias_method_chain :parent_issue_id,   :full_id
-            alias_method_chain :copy_from,         :issue_id
-            alias_method_chain :send_notification, :delay
+            alias_method :safe_attributes_without_issue_id=, :safe_attributes=
+            alias_method :safe_attributes=, :safe_attributes_with_issue_id=
+            alias_method :parent_issue_id_without_full_id=, :parent_issue_id=
+            alias_method :parent_issue_id=, :parent_issue_id_with_full_id=
+            alias_method :parent_issue_id_without_full_id, :parent_issue_id
+            alias_method :parent_issue_id, :parent_issue_id_with_full_id
+            alias_method :copy_from_without_issue_id, :copy_from
+            alias_method :copy_from, :copy_from_with_issue_id
+            alias_method :send_notification_without_delay, :send_notification
+            alias_method :send_notification, :send_notification_with_delay
         end
     end
 
@@ -86,7 +93,7 @@ module IssueIdPatch
 
         def safe_attributes_with_issue_id=(attrs, user = User.current)
             if attrs.is_a?(Hash) && attrs['parent_issue_id'].present? &&
-               attrs['parent_issue_id'].is_a?(String) && attrs['parent_issue_id'].include?('-')
+            attrs['parent_issue_id'].is_a?(String) && attrs['parent_issue_id'].include?('-')
                 key, number = attrs['parent_issue_id'].split('-')
 
                 legacy_id = self.class.find_legacy_id_by_project_key_and_issue_number(key.gsub(%r{^#}, ''), number)
@@ -178,8 +185,8 @@ module IssueIdPatch
                 reserved_number = ProjectIssueKey.reserve_issue_number!(project.issue_key)
                 if reserved_number
                     Issue.where(:id => id)
-                         .update_all(:project_key  => project.issue_key,
-                                     :issue_number => reserved_number)
+                        .update_all(:project_key  => project.issue_key,
+                                    :issue_number => reserved_number)
                     reload
                 end
             end
