@@ -92,7 +92,7 @@ module IssueIdPatch
     module InstanceMethods
 
         def safe_attributes_with_issue_id=(attrs, user = User.current)
-            if attrs.is_a?(Hash) && attrs['parent_issue_id'].present? &&
+            if attrs['parent_issue_id'].present? &&
             attrs['parent_issue_id'].is_a?(String) && attrs['parent_issue_id'].include?('-')
                 key, number = attrs['parent_issue_id'].split('-')
 
