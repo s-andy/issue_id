@@ -14,7 +14,7 @@ module IssueIdsPreviewsControllerPatch
     module InstanceMethods
 
         def prepare_issue_id
-            if params[:id] && m = params[:id].to_s.match(%r{\A#?([A-Z][A-Z0-9]*-[0-9]+)\z})
+            if params[:id] && m = params[:id].to_s.match(%r{\A#?(#{IssueID::FORMAT}-[0-9]+)\z})
                 begin
                     issue = Issue.find(m[1])
                     params[:id] = issue.id

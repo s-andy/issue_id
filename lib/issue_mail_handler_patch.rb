@@ -14,7 +14,7 @@ module IssueMailHandlerPatch
 
     module InstanceMethods
 
-        ISSUE_ID_REPLY_SUBJECT_RE = %r{\[(?:[^\]]*\s+)?#([A-Z][A-Z0-9]*)-(\d+)\]}
+        ISSUE_ID_REPLY_SUBJECT_RE = %r{\[(?:[^\]]*\s+)?#(#{IssueID::FORMAT})-(\d+)\]}
 
         def dispatch_with_issue_id
             subject = email.subject.to_s

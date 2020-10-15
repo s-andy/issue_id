@@ -16,7 +16,7 @@ module IssueChangesetPatch
 
     module InstanceMethods
 
-        ISSUE_ID_RE = %r{[A-Z][A-Z0-9]*-\d+}
+        ISSUE_ID_RE = %r{#{IssueID::FORMAT}-\d+}
 
         # Almost a copy of find_referenced_issue_by_id
         def find_referenced_issue_by_full_id(id)

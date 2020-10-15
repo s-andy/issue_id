@@ -14,7 +14,7 @@ module IssueIdsRelationsControllerPatch
     module InstanceMethods
 
         def prepare_issue_to_id
-            if params[:relation] && m = params[:relation][:issue_to_id].to_s.strip.match(%r{\A#?([A-Z][A-Z0-9]*-[0-9]+)\z})
+            if params[:relation] && m = params[:relation][:issue_to_id].to_s.strip.match(%r{\A#?(#{IssueID::FORMAT}-[0-9]+)\z})
                 begin
                     issue_to = Issue.find(m[1])
                     params[:relation][:issue_to_id] = issue_to.id

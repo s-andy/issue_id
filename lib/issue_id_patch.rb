@@ -11,7 +11,7 @@ module IssueIdPatch
 
             validates_uniqueness_of :issue_number, :scope => :project_key, :allow_blank => true, :if => Proc.new { |issue| issue.issue_number_changed? }
             validates_length_of :project_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH, :allow_blank => true
-            validates_format_of :project_key, :with => %r{\A[A-Z][A-Z0-9]*\z}, :allow_blank => true
+            validates_format_of :project_key, :with => %r{\A#{IssueID::FORMAT}\z}, :allow_blank => true
 
             after_save :create_moved_issue, :generate_issue_id, :send_notification_with_full_id
 
