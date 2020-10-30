@@ -7,7 +7,8 @@ module IssueQueriesHelperPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :column_value, :issue_id
+            alias_method :column_value_without_issue_id, :column_value
+            alias_method :column_value, :column_value_with_issue_id
         end
     end
 

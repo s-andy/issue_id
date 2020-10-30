@@ -7,13 +7,14 @@ module IssueMailHandlerPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :dispatch, :issue_id
+            alias_method :dispatch_without_issue_id, :dispatch
+            alias_method :dispatch, :dispatch_with_issue_id
         end
     end
 
     module InstanceMethods
 
-        ISSUE_ID_REPLY_SUBJECT_RE = %r{\[(?:[^\]]*\s+)?#([A-Z][A-Z0-9]*)-(\d+)\]}
+        ISSUE_ID_REPLY_SUBJECT_RE = %r{\[(?:[^\]]*\s+)?#(#{IssueID::FORMAT})-(\d+)\]}
 
         def dispatch_with_issue_id
             subject = email.subject.to_s

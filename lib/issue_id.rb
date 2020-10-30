@@ -1,6 +1,8 @@
 class IssueID < BasicObject
     attr_reader :id, :project_key, :issue_number
 
+    FORMAT = "[A-Z][A-Z0-9_]+"
+
     def initialize(global_id, key = nil, number = nil)
         @id = global_id
         @project_key = key

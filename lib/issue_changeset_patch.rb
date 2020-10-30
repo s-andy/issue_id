@@ -7,14 +7,16 @@ module IssueChangesetPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :find_referenced_issue_by_id, :full_id
-            alias_method_chain :scan_comment_for_issue_ids,  :full_ids
+            alias_method :find_referenced_issue_by_id_without_full_id, :find_referenced_issue_by_id
+            alias_method :find_referenced_issue_by_id, :find_referenced_issue_by_id_with_full_id
+            alias_method :scan_comment_for_issue_ids_without_full_ids, :scan_comment_for_issue_ids
+            alias_method :scan_comment_for_issue_ids, :scan_comment_for_issue_ids_with_full_ids
         end
     end
 
     module InstanceMethods
 
-        ISSUE_ID_RE = %r{[A-Z][A-Z0-9]*-\d+}
+        ISSUE_ID_RE = %r{#{IssueID::FORMAT}-\d+}
 
         # Almost a copy of find_referenced_issue_by_id
         def find_referenced_issue_by_full_id(id)

@@ -1,4 +1,4 @@
-class AddProjectsIssueKey < ActiveRecord::Migration
+class AddProjectsIssueKey < Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRecord::Migration[4.2]
 
     def self.up
         add_column :projects, :issue_key, :string, :limit => 10

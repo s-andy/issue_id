@@ -36,7 +36,7 @@ module IssueAutoCompletesControllerPatch
                         scope = scope.where.not(:id => issue_id.to_i)
                     end
                 end
-                if q.match(%r{\A#?([A-Z][A-Z0-9]*)-(\d+)\z})
+                if q.match(%r{\A#?(#{IssueID::FORMAT})-(\d+)\z})
                     @issues << scope.find_by_project_key_and_issue_number($1.upcase, $2.to_i)
                 elsif q.match(%r{\A#?(\d+)\z})
                     @issues << scope.find_by_project_key_and_issue_number(@project.issue_key, $1.to_i) if @project

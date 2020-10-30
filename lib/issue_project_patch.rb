@@ -13,7 +13,7 @@ module IssueProjectPatch
             has_one :key, :class_name => 'ProjectIssueKey', :primary_key => :issue_key, :foreign_key => :project_key
 
             validates_length_of :issue_key, :in => 1..Project::ISSUE_KEY_MAX_LENGTH, :allow_blank => true
-            validates_format_of :issue_key, :with => %r{\A[A-Z][A-Z0-9]*\z}, :allow_blank => true
+            validates_format_of :issue_key, :with => %r{\A#{IssueID::FORMAT}\z}, :allow_blank => true
 
             validate :validate_issue_key_duplicates
 

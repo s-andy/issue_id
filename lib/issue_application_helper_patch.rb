@@ -7,8 +7,10 @@ module IssueApplicationHelperPatch
         base.class_eval do
             unloadable
 
-            alias_method_chain :link_to_issue,       :id
-            alias_method_chain :parse_redmine_links, :issue_id
+            alias_method :link_to_issue_without_id, :link_to_issue
+            alias_method :link_to_issue, :link_to_issue_with_id
+            alias_method :parse_redmine_links_without_issue_id, :parse_redmine_links
+            alias_method :parse_redmine_links, :parse_redmine_links_with_issue_id
         end
     end
 
@@ -23,7 +25,7 @@ module IssueApplicationHelperPatch
             end
         end
 
-        ISSUE_ID_RE = %r{([\s\(,\-\[\>]|\A)(!)?(#(?:([A-Z][A-Z0-9]*)-)?(\d+))((?:#note)?-(\d+))?(?=(?=[[:punct:]][^A-Za-z0-9_/])|,|\s|\]|<|\z)}m
+        ISSUE_ID_RE = %r{([\s\(,\-\[\>]|\A)(!)?(#(?:(#{IssueID::FORMAT})-)?(\d+))((?:#note)?-(\d+))?(?=(?=[[:punct:]][^A-Za-z0-9_/])|,|\s|\]|<|\z)}m
 
         def parse_redmine_links_with_issue_id(text, project, obj, attr, only_path, options)
             text.gsub!(ISSUE_ID_RE) do |m|

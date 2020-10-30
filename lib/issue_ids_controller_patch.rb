@@ -7,12 +7,14 @@ module IssueIdsControllerPatch
         base.class_eval do
             unloadable
 
-            prepend_before_filter :detect_moved_issues, :only => :show
+            prepend_before_action :detect_moved_issues, :only => :show
 
-            after_filter :fix_creation_notice, :only => :create
+            after_action :fix_creation_notice, :only => :create
 
-            alias_method_chain :build_new_issue_from_params,          :full_ids
-            alias_method_chain :retrieve_previous_and_next_issue_ids, :full_ids
+            alias_method :build_new_issue_from_params_without_full_ids, :build_new_issue_from_params
+            alias_method :build_new_issue_from_params, :build_new_issue_from_params_with_full_ids
+            alias_method :retrieve_previous_and_next_issue_ids_without_full_ids, :retrieve_previous_and_next_issue_ids
+            alias_method :retrieve_previous_and_next_issue_ids, :retrieve_previous_and_next_issue_ids_with_full_ids
         end
     end
 
