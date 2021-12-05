@@ -35,7 +35,7 @@ module IssueChangesetPatch
         end
 
         def find_referenced_issue_by_id_with_full_id(id)
-            if id.is_a?(String) && id.include?('-')
+            if id.is_a?(String) && id.to_s.include?('-')
                 find_referenced_issue_by_full_id(id)
             else
                 find_referenced_issue_by_id_without_full_id(id)
